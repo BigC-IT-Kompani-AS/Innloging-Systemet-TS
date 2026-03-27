@@ -56,13 +56,10 @@ app.get('/login', async function login_page(_req, _res) {
         const JWT = await jwt.decodeJWT();
         const JWTstring = JSON.stringify(JWT);
         const data = JSON.parse(JWTstring);
-        console.log(verifyJWT)
-        console.log(data)
-        console.log(weeklySession)
+
         if (verifyJWT && data && data.WsessionID === weeklySession) {
             const check_result = await db.getByValue<user_db_schema> ('users', ['email'], data.email);
             const user = check_result.rows[0];
-            console.log(user)
             if (user && user.username === data.username && user.email === data.email && user.uuid === data.uuid) {
                 _req.session.user = {
                     uuid: data.uuid,
