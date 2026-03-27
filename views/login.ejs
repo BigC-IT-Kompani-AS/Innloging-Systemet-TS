@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - TaskFlow</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/forms.css">
+</head>
+<body>
+
+<div class="form-container">
+    <div class="form-card">
+        <h2>Welcome Back</h2>
+        <form>
+            <input type="email" name="email" id="email" placeholder="Email Address" required>
+            <input type="password" name="password" id="password" placeholder="Password" required>
+            <p id="error-handler"></p>
+        </form>
+        <button type="button" onclick="login()" class="btn primary full">Login</button>
+
+        <p class="switch-text">
+            Don't have an account?
+            <a href="/signup">Sign Up</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    async function login() {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const error_handler = document.getElementById('error-handler');
+
+        const res = await fetch('/login', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email,
+                password
+            })
+        });
+
+        const data = await res.json();
+        if (data.url) {
+            window.location.href = data.url;
+        } else if(data.error) {
+            error_handler.innerHTML=`${data.error}`;
+        };
+    }
+</script>
+</body>
+</html>
