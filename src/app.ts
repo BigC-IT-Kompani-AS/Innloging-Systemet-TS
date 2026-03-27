@@ -46,7 +46,7 @@ app.get("/user/validateToken", (_req, _res) => {
 app.get('/login', async function login_page(_req, _res) {
     if (_req.cookies['JWT'] && _req.cookies['WsessionID']) {
         // variables
-        const weeklySession = _req.cookies.WsessionID;
+        const weeklySession = _req.cookies['WsessionID'];
 
         // classes
         const jwt = new jwtAuthorization(_req, _res, 'gfg_jwt_secret_key', 'gfg_token_header_key');
@@ -56,9 +56,13 @@ app.get('/login', async function login_page(_req, _res) {
         const JWT = await jwt.decodeJWT();
         const JWTstring = JSON.stringify(JWT);
         const data = JSON.parse(JWTstring);
+        console.log(verifyJWT)
+        console.log(data)
+        console.log(weeklySession)
         if (verifyJWT && data && data.WsessionID === weeklySession) {
             const check_result = await db.getByValue<user_db_schema> ('users', ['email'], data.email);
             const user = check_result.rows[0];
+            console.log(user)
             if (user && user.username === data.username && user.email === data.email && user.uuid === data.uuid) {
                 _req.session.user = {
                     uuid: data.uuid,
@@ -110,7 +114,7 @@ app.post('/login', express.urlencoded({extended: true}), async function login(_r
             };
 
             const user_data = {
-                username: user.name,
+                username: user.username,
                 email: user.email,
                 uuid: user.uuid,
                 WsessionID: _req.sessionID
